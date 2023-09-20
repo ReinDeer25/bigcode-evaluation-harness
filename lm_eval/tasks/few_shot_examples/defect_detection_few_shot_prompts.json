@@ -1,0 +1,4 @@
+{"source1":"static inline void mix_2f_1r_to_stereo(AC3DecodeContext *ctx) { int i; float (*output)[256] = ctx->audio_block.block_output; for (i = 0; i < 256; i++) { output[1][i] += output[2][i]; output[2][i] += output[3][i]; } memset(output[3], 0, sizeof(output[3])); } ",
+"target1":"secure",
+"source2":"static inline int cris_bound_w(int v, int b) { int r = v; asm (\"bound.w\t%1, %0\n\" : \"+r\" (r) : \"ri\" (b)); return r; } ",
+"target2":"insecure"}

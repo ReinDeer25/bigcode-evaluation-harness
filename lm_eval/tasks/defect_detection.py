@@ -10,6 +10,7 @@ The task is binary classification
 from lm_eval.base import Task
 import re
 import evaluate
+import json
 
 # TODO: Add the BibTeX citation for the task.
 _CITATION = """
@@ -38,9 +39,24 @@ class DefectDetection(Task):
         return self.dataset["test"]
 
     def fewshot_examples(self):
-        # TODO: load few-shot examples (from lm_eval/tasks/fewshot_examples) if they exist
         """Loads and returns the few-shot examples for the task if they exist."""
-        pass
+        with open(
+            "lm_eval/tasks/few_shot_examples/defect_detection_few_shot_prompts.json",
+            "r",
+        ) as file:
+            examples = json.load(file)
+        return examples
+    
+    @staticmethod
+    def two_shot_prompt(prefix, instruction, code, examples):
+        """Two shot prompt format as source & target language documentation"""
+        prompt = f"\n### Instruction:\n{instruction}{examples['source1']}\
+                   \n### Response:\n{examples['target1']}\
+                   \n### Instruction:\n{instruction}{examples['source2']}\
+                   \n### Response:\n{examples['target2']}\
+                   \n### Instruction:\n{instruction}{code}\
+                   \n### Response:\n"
+        return prefix + prompt
 
     def get_prompt(self, doc):
         """
@@ -49,16 +65,12 @@ class DefectDetection(Task):
             sample from the test dataset
         :return: str
         """
-        #prefix = """Classify the following C programming language code as 'insecure' if it has vulnerabilities, or 'insecure' otherwise:"""
-        #prefix = """Classify the given code as either 'insecure' or 'secure'"""
-        #prefix = """Based on the following C code, classify the case as either 'secure' code or 'insecure' code:\n"""
-        #prefix = """Please classify the following C programming language code as either "secure" or "insecure":\n"""
+        prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request."
+        instruction = "Classify whether the code is secure or insecure to use."
         code = doc["func"]
-        INSTRUCTION = f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
-        ### Instruction:
-        Classify whether the following code secure or insecure to use: {code}
-        ### Response:"""
-        return INSTRUCTION
+        examples = self.fewshot_examples()
+        prompt = self.two_shot_prompt(prefix, instruction, code ,examples)
+        return prompt
 
     def get_reference(self, doc):
         """
