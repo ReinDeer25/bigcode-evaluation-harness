@@ -4,7 +4,7 @@ from pprint import pprint
 from . import (apps, codexglue_code_to_text, codexglue_text_to_text, conala,
                concode, ds1000, gsm, humaneval, humanevalpack,
                instruct_humaneval, instruct_wizard_humaneval, mbpp, multiple,
-               parity, python_bugs, quixbugs, recode, defect_detection)
+               parity, python_bugs, quixbugs, recode, defect_detection,clone_detection)
 
 TASK_REGISTRY = {
     **apps.create_all_tasks(),
@@ -26,6 +26,7 @@ TASK_REGISTRY = {
     **instruct_humaneval.create_all_tasks(),
     **recode.create_all_tasks(),
     "defectdetection": defect_detection.DefectDetection,
+    "clonedetection": clone_detection.CloneDetection,
 }
 
 ALL_TASKS = sorted(list(TASK_REGISTRY))
