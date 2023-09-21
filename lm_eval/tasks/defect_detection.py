@@ -50,12 +50,12 @@ class DefectDetection(Task):
     @staticmethod
     def two_shot_prompt(prefix, instruction, code, examples):
         """Two shot prompt format as source & target language documentation"""
-        prompt = f"\n### Instruction:\n{instruction}{examples['source1']}\
-                   \n### Response:\n{examples['target1']}\
-                   \n### Instruction:\n{instruction}{examples['source2']}\
-                   \n### Response:\n{examples['target2']}\
-                   \n### Instruction:\n{instruction}{code}\
-                   \n### Response:\n"
+        prompt = f"\n### Instruction:\n{instruction}:{examples['source1']}\
+                   \n### Response: '{examples['target1']}'\
+                   \n### Instruction:\n{instruction}:{examples['source2']}\
+                   \n### Response: '{examples['target2']}'\
+                   \n### Instruction:\n{instruction}:{code}\
+                   \n### Response: "
         return prefix + prompt
 
     def get_prompt(self, doc):
@@ -65,8 +65,8 @@ class DefectDetection(Task):
             sample from the test dataset
         :return: str
         """
-        prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request."
-        instruction = "Classify whether the code is secure or insecure to use."
+        prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n"
+        instruction = "Classify whether the code is 'secure' or 'insecure' to use"
         code = doc["func"]
         examples = self.fewshot_examples()
         prompt = self.two_shot_prompt(prefix, instruction, code ,examples)
@@ -92,13 +92,14 @@ class DefectDetection(Task):
         :return: str
         """
         # logic is to count the word from generation text and used as the final prediction
+        generation = generation.lower()
         secure_word_count = len(re.findall(r'\bsecure\b', generation)) 
         insecure_word_count = len(re.findall(r'\binsecure\b', generation)) 
         if insecure_word_count>=secure_word_count:
             prediction = "1" #"insecure"
         else:
             prediction = "0" #"secure"
-        return generation
+        return prediction
 
     def process_results(self, generations, references):
         # TODO: define how the evaluation score is computed from list of \
