@@ -93,7 +93,7 @@ class CloneDetection(Task):
             prediction = "1" #"different semantic"
         else:
             prediction = "0" #"same semantic"
-        return generation
+        return prediction
 
     def process_results(self, generations, references):
         # TODO: define how the evaluation score is computed from list of \
