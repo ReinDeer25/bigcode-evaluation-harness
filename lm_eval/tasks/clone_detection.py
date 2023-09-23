@@ -58,12 +58,19 @@ class CloneDetection(Task):
             sample from the test dataset
         :return: str
         """
-        prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n"
-        instruction = "Answer 'yes' if Code1 and Code2 has semantic equivalent or 'no' otherwise:"
-        code = f"\n### Code1:{doc['func1']}\
-                 \n### Code2:{doc['func2']}\
-                 \n### Answer: "
-        prompt = prefix+instruction+code
+        instruction= '''Is there a clone relation between the Code1 and Code2, and respond to YES or NO.'''
+        code1= doc['func1']
+        code2= doc['func2']
+        prompt = f'''Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+
+    ### Instruction:
+    {instruction}
+
+    ### Input:
+    Code1: {code1}
+    Code2: {code2}
+
+    ### Response:'''
         return prompt
 
     def get_reference(self, doc):
@@ -93,7 +100,7 @@ class CloneDetection(Task):
             prediction = "1" #"different semantic"
         else:
             prediction = "0" #"same semantic"
-        return prediction
+        return generation
 
     def process_results(self, generations, references):
         # TODO: define how the evaluation score is computed from list of \
