@@ -48,15 +48,16 @@ class DefectDetection(Task):
         return examples
     
     @staticmethod
-    def two_shot_prompt(prefix, instruction, code, examples):
+    def two_shot_prompt(instruction, code, examples):
         """Two shot prompt format as source & target language documentation"""
-        prompt = f"\n### Instruction:\n{instruction}:{examples['source1']}\
+        prompt = f"\n### Instruction: {instruction}\
+                   \n### Code: {examples['source1']}\
                    \n### Response: '{examples['target1']}'\
-                   \n### Instruction:\n{instruction}:{examples['source2']}\
+                   \n### Code: {examples['source2']}\
                    \n### Response: '{examples['target2']}'\
-                   \n### Instruction:\n{instruction}:{code}\
+                   \n### Code: {code}\
                    \n### Response: "
-        return prefix + prompt
+        return prompt
 
     def get_prompt(self, doc):
         """
@@ -65,11 +66,10 @@ class DefectDetection(Task):
             sample from the test dataset
         :return: str
         """
-        prefix = "Below is an instruction that describes a task. Write a response that appropriately completes the request.\n"
-        instruction = "Classify whether the code is 'secure' or 'insecure' to use"
+        instruction = "Classify whether the Code is 'secure' or 'insecure' to use"
         code = doc["func"]
         examples = self.fewshot_examples()
-        prompt = self.two_shot_prompt(prefix, instruction, code ,examples)
+        prompt = self.two_shot_prompt(instruction, code ,examples)
         return prompt
 
     def get_reference(self, doc):
