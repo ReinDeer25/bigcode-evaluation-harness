@@ -38,27 +38,6 @@ class DefectDetection(Task):
         """Returns dataset for the task or an iterable of any object, that get_prompt can handle"""
         return self.dataset["test"]
 
-    def fewshot_examples(self):
-        """Loads and returns the few-shot examples for the task if they exist."""
-        with open(
-            "lm_eval/tasks/few_shot_examples/defect_detection_few_shot_prompts.json",
-            "r",
-        ) as file:
-            examples = json.load(file)
-        return examples
-    
-    @staticmethod
-    def two_shot_prompt(instruction, code, examples):
-        """Two shot prompt format as source & target language documentation"""
-        prompt = f"\n### Instruction: {instruction}\
-                   \n### Code: {examples['source1']}\
-                   \n### Response: '{examples['target1']}'\
-                   \n### Code: {examples['source2']}\
-                   \n### Response: '{examples['target2']}'\
-                   \n### Code: {code}\
-                   \n### Response: "
-        return prompt
-
     def get_prompt(self, doc):
         """
         Builds the prompt for the LM to generate from.
@@ -66,10 +45,17 @@ class DefectDetection(Task):
             sample from the test dataset
         :return: str
         """
-        instruction = "Classify whether the Code is 'secure' or 'insecure' to use"
-        code = doc["func"]
-        examples = self.fewshot_examples()
-        prompt = self.two_shot_prompt(instruction, code ,examples)
+        instruction = '''Is there a defect in the Code, and respond to YES or NO.'''
+        code = doc['func']
+        prompt = f'''Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+
+### Instruction:
+{instruction}
+
+### Input:
+{code}
+
+### Response:'''
         return prompt
 
     def get_reference(self, doc):
@@ -92,14 +78,13 @@ class DefectDetection(Task):
         :return: str
         """
         # logic is to count the word from generation text and used as the final prediction
-        generation = generation.lower()
         secure_word_count = len(re.findall(r'\bsecure\b', generation)) 
         insecure_word_count = len(re.findall(r'\binsecure\b', generation)) 
         if insecure_word_count>=secure_word_count:
             prediction = "1" #"insecure"
         else:
             prediction = "0" #"secure"
-        return prediction
+        return generation
 
     def process_results(self, generations, references):
         # TODO: define how the evaluation score is computed from list of \
