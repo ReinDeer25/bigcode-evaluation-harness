@@ -46,16 +46,8 @@ class DefectDetection(Task):
         :return: str
         """
         instruction = '''Is there a defect in the Code, and respond to YES or NO.'''
-        code = doc['func']
-        prompt = f'''Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
-
-### Instruction:
-{instruction}
-
-### Input:
-{code}
-
-### Response:'''
+        context = doc['func']
+        prompt= f'''Question: {instruction}\n{context}\n\nAnswer:'''
         return prompt
 
     def get_reference(self, doc):
@@ -78,13 +70,19 @@ class DefectDetection(Task):
         :return: str
         """
         # logic is to count the word from generation text and used as the final prediction
-        secure_word_count = len(re.findall(r'\bsecure\b', generation)) 
-        insecure_word_count = len(re.findall(r'\binsecure\b', generation)) 
-        if insecure_word_count>=secure_word_count:
-            prediction = "1" #"insecure"
+        true_label = str(int(self.dataset["test"][idx]['target']))
+        process = generation.split("\nAnswer:")[-1]
+        yes_word_count = len(re.findall(r'\byes\b|\bthere is a defect\b', process.lower())) 
+        no_word_count = len(re.findall(r'\bno\b|\bcode is correct\b', process.lower())) 
+        if yes_word_count>no_word_count:
+            prediction = "1" #there is defect
+        elif yes_word_count<no_word_count:
+            prediction = "0" #there is no defect
         else:
-            prediction = "0" #"secure"
-        return generation
+            prediction = "-1" #invalid
+        return {'prediction': prediction,
+                'true_label': true_label,
+                'raw_text': generation }
 
     def process_results(self, generations, references):
         # TODO: define how the evaluation score is computed from list of \
@@ -103,10 +101,10 @@ class DefectDetection(Task):
         recall_metric = evaluate.load("recall")
         precision_metric = evaluate.load("precision")
         f1_metric = evaluate.load("f1")
-        preds = [gen[0] for gen in generations]
+        preds = [gen[0]['prediction'] for gen in generations]
         return  {
             "Accuracy": accuracy_metric.compute(predictions=preds, references=references),
-            "Recall":recall_metric.compute(predictions=preds, references=references), 
-            "Precision":precision_metric.compute(predictions=preds, references=references), 
-            "F1":f1_metric.compute(predictions=preds, references=references)
+            #"Recall":recall_metric.compute(predictions=preds, references=references), 
+            #"Precision":precision_metric.compute(predictions=preds, references=references), 
+            #"F1":f1_metric.compute(predictions=preds, references=references)
         }
