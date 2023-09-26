@@ -1,0 +1,182 @@
+____________________________________________________________
+_P-tuning______________________________________________________
+
+Loaded PEFT model. Merging...
+Traceback (most recent call last):
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/peft_model.py", line 447, in __getattr__
+    return super().__getattr__(name)  # defer to nn.Module's logic
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'PeftModelForCausalLM' object has no attribute 'merge_and_unload'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 356, in <module>
+    main()
+  File "main.py", line 292, in main
+    model.merge_and_unload()
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/peft_model.py", line 449, in __getattr__
+    return getattr(self.base_model, name)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'GPTBigCodeForCausalLM' object has no attribute 'merge_and_unload'
+Traceback (most recent call last):
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/accelerate_cli.py", line 47, in main
+    args.func(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 986, in launch_command
+    simple_launcher(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 628, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/python', 'main.py', '--model', 'bigcode/starcoderbase-3b', '--peft_model', 'starpeft/starcoderbase-3b-ptuning', '--max_length_generation', '512', '--tasks', 'defectdetection', '--do_sample', 'False', '--use_auth_token', '--save_generations', '--metric_output_path', 'evaluation_3b-ptuning_fullB.json', '--save_generations_path', 'generations_3b-ptuning_fullB.json']' returned non-zero exit status 1.
+
+____________________________________________________________
+_Ftt-1b______________________________________________________
+
+warnings.warn(
+Traceback (most recent call last):
+  File "main.py", line 356, in <module>
+    main()
+  File "main.py", line 295, in main
+    tokenizer = AutoTokenizer.from_pretrained(
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/transformers/models/auto/tokenization_auto.py", line 754, in from_pretrained
+    return tokenizer_class_fast.from_pretrained(pretrained_model_name_or_path, *inputs, **kwargs)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 1838, in from_pretrained
+    raise EnvironmentError(
+OSError: Can't load tokenizer for 'starpeft/starcoderbase-1b-fft'. If you were trying to load it from 'https://huggingface.co/models', make sure you don't have a local directory with the same name. Otherwise, make sure 'starpeft/starcoderbase-1b-fft' is the correct path to a directory containing all relevant files for a GPT2TokenizerFast tokenizer.
+Traceback (most recent call last):
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/accelerate_cli.py", line 47, in main
+    args.func(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 986, in launch_command
+    simple_launcher(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 628, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/python', 'main.py', '--model', 'starpeft/starcoderbase-1b-fft', '--max_length_generation', '512', '--tasks', 'defectdetection', '--do_sample', 'False', '--use_auth_token', '--save_generations', '--metric_output_path', 'evaluation_1b-fft_fullB.json', '--save_generations_path', 'generations_1b-fft_fullB.json']' returned non-zero exit status 1.
+
+____________________________________________________________
+_prompt______________________________________________________
+Loaded PEFT model. Merging...
+Traceback (most recent call last):
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/peft_model.py", line 447, in __getattr__
+    return super().__getattr__(name)  # defer to nn.Module's logic
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'PeftModelForCausalLM' object has no attribute 'merge_and_unload'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 356, in <module>
+    main()
+  File "main.py", line 292, in main
+    model.merge_and_unload()
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/peft_model.py", line 449, in __getattr__
+    return getattr(self.base_model, name)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'GPTBigCodeForCausalLM' object has no attribute 'merge_and_unload'
+Traceback (most recent call last):
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/accelerate_cli.py", line 47, in main
+    args.func(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 986, in launch_command
+    simple_launcher(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 628, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/python', 'main.py', '--model', 'bigcode/starcoderbase-3b', '--peft_model', 'starpeft/starcoderbase-3b-prompt', '--max_length_generation', '512', '--tasks', 'defectdetection', '--do_sample', 'False', '--use_auth_token', '--save_generations', '--metric_output_path', 'evaluation_3b-prompt_fullB.json', '--save_generations_path', 'generations_3b-prompt_fullB.json']' returned non-zero exit status 1.
+
+____________________________________________________________
+_adapterp______________________________________________________
+
+Loaded PEFT model. Merging...
+Traceback (most recent call last):
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/peft_model.py", line 447, in __getattr__
+    return super().__getattr__(name)  # defer to nn.Module's logic
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'PeftModelForCausalLM' object has no attribute 'merge_and_unload'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/tuners/bottleneck.py", line 192, in __getattr__
+    return super().__getattr__(name)  # defer to nn.Module's logic
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'BottleneckModel' object has no attribute 'merge_and_unload'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 356, in <module>
+    main()
+  File "main.py", line 292, in main
+    model.merge_and_unload()
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/peft_model.py", line 449, in __getattr__
+    return getattr(self.base_model, name)
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/tuners/bottleneck.py", line 194, in __getattr__
+    return getattr(self.model, name)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'GPTBigCodeForCausalLM' object has no attribute 'merge_and_unload'
+Traceback (most recent call last):
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/accelerate_cli.py", line 47, in main
+    args.func(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 986, in launch_command
+    simple_launcher(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 628, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/python', 'main.py', '--model', 'bigcode/starcoderbase-3b', '--peft_model', 'starpeft/starcoderbase-3b-adapterp', '--max_length_generation', '512', '--tasks', 'defectdetection', '--do_sample', 'False', '--use_auth_token', '--save_generations', '--metric_output_path', 'evaluation_3b-adapterp_fullB.json', '--save_generations_path', 'generations_3b-adapterp_fullB.json']' returned non-zero exit status 1.
+
+____________________________________________________________
+_parallel______________________________________________________
+
+Loaded PEFT model. Merging...
+Traceback (most recent call last):
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/peft_model.py", line 447, in __getattr__
+    return super().__getattr__(name)  # defer to nn.Module's logic
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'PeftModelForCausalLM' object has no attribute 'merge_and_unload'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/tuners/bottleneck.py", line 192, in __getattr__
+    return super().__getattr__(name)  # defer to nn.Module's logic
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'BottleneckModel' object has no attribute 'merge_and_unload'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 356, in <module>
+    main()
+  File "main.py", line 292, in main
+    model.merge_and_unload()
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/peft_model.py", line 449, in __getattr__
+    return getattr(self.base_model, name)
+  File "/fs03/do28/nsup0001/StarCoder/peft/src/peft/tuners/bottleneck.py", line 194, in __getattr__
+    return getattr(self.model, name)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1614, in __getattr__
+    raise AttributeError("'{}' object has no attribute '{}'".format(
+AttributeError: 'GPTBigCodeForCausalLM' object has no attribute 'merge_and_unload'
+Traceback (most recent call last):
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/accelerate_cli.py", line 47, in main
+    args.func(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 986, in launch_command
+    simple_launcher(args)
+  File "/scratch/do28/nsup0001/miniconda/envs/bigcode/lib/python3.8/site-packages/accelerate/commands/launch.py", line 628, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/scratch/do28/nsup0001/miniconda/envs/bigcode/bin/python', 'main.py', '--model', 'bigcode/starcoderbase-3b', '--peft_model', 'starpeft/starcoderbase-3b-parallel', '--max_length_generation', '512', '--tasks', 'defectdetection', '--do_sample', 'False', '--use_auth_token', '--save_generations', '--metric_output_path', 'evaluation_3b-parallel_fullB.json', '--save_generations_path', 'generations_3b-parallel_fullB.json']' returned non-zero exit status 1.
+
