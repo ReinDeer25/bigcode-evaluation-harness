@@ -46,8 +46,8 @@ class DefectDetection(Task):
         :return: str
         """
         instruction = '''Is there a defect in the Code, and respond to YES or NO.'''
-        context = doc['func']
-        prompt= f'''Question: {instruction}\n{context}\n\nAnswer:'''
+        code = doc['func']
+        prompt = f'''Question: {code}\n{instruction}\n\nAnswer:'''
         return prompt
 
     def get_reference(self, doc):
@@ -70,7 +70,7 @@ class DefectDetection(Task):
         :return: str
         """
         # logic is to count the word from generation text and used as the final prediction
-        true_label = str(int(self.dataset["test"][idx]['target']))
+        true_label = self.get_reference(self.dataset["test"][idx])
         process = generation.split("\nAnswer:")[-1]
         yes_word_count = len(re.findall(r'\byes\b|\bthere is a defect\b', process.lower())) 
         no_word_count = len(re.findall(r'\bno\b|\bcode is correct\b', process.lower())) 
@@ -80,7 +80,8 @@ class DefectDetection(Task):
             prediction = "0" #there is no defect
         else:
             prediction = "-1" #invalid
-        return {'prediction': prediction,
+        return {'ID':idx,
+                'prediction': prediction,
                 'true_label': true_label,
                 'raw_text': generation }
 
@@ -98,13 +99,9 @@ class DefectDetection(Task):
         :return: dict[str: float]
         """
         accuracy_metric = evaluate.load("accuracy")
-        recall_metric = evaluate.load("recall")
-        precision_metric = evaluate.load("precision")
         f1_metric = evaluate.load("f1")
         preds = [gen[0]['prediction'] for gen in generations]
         return  {
-            "Accuracy": accuracy_metric.compute(predictions=preds, references=references),
-            #"Recall":recall_metric.compute(predictions=preds, references=references), 
-            #"Precision":precision_metric.compute(predictions=preds, references=references), 
-            #"F1":f1_metric.compute(predictions=preds, references=references)
+            "Accuracy": accuracy_metric.compute(predictions=preds, references=references)['accuracy'],
+            "F1(macro)":f1_metric.compute(predictions=preds, references=references,average='macro')['f1']
         }
