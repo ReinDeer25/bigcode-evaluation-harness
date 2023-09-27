@@ -288,12 +288,15 @@ def main():
             from peft import PeftModel  # dynamic import to avoid dependency on peft
 
             model = PeftModel.from_pretrained(model, args.peft_model)
-            print("Loaded PEFT model. Merging...")
-            model.merge_and_unload()
-            print("Merge complete.")
+            try:
+                print("Loaded PEFT model. Merging...")
+                model.merge_and_unload()
+                print("Merge complete.")
+            except:
+                pass
 
         tokenizer = AutoTokenizer.from_pretrained(
-            args.model,
+            args.model.replace("starpeft/","bigcode/").replace("-fft",""),
             revision=args.revision,
             trust_remote_code=args.trust_remote_code,
             use_auth_token=args.use_auth_token,
