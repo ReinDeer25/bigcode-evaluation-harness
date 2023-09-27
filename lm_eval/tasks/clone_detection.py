@@ -61,16 +61,7 @@ class CloneDetection(Task):
         instruction= '''Is there a clone relation between the Code1 and Code2, and respond to YES or NO.'''
         code1= doc['func1']
         code2= doc['func2']
-        prompt = f'''Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
-
-    ### Instruction:
-    {instruction}
-
-    ### Input:
-    Code1: {code1}
-    Code2: {code2}
-
-    ### Response:'''
+        prompt= f'''Question: {instruction}\nCode1: {code1}.\nCode2: {code2}.\n\nAnswer:'''
         return prompt
 
     def get_reference(self, doc):
@@ -93,14 +84,19 @@ class CloneDetection(Task):
         :return: str
         """
         # logic is to count the word from generation text and used as the final prediction
-        #generation = generation.lower()
-        yes_word_count = len(re.findall(r'\byes\b', generation)) 
-        no_word_count = len(re.findall(r'\bno\b', generation)) 
-        if no_word_count>=yes_word_count:
-            prediction = "1" #"different semantic"
+        true_label = self.get_reference(self.dataset["test"][idx])
+        process = generation.split("\nAnswer:")[-1]
+        yes_word_count = len(re.findall(r'\byes\b', process.lower())) 
+        no_word_count = len(re.findall(r'\bno\b', process.lower())) 
+        if yes_word_count>no_word_count:
+            prediction = "1" #semantic equivalence (clone)
+        elif yes_word_count<no_word_count:
+            prediction = "0" #different
         else:
-            prediction = "0" #"same semantic"
-        return generation
+            prediction = "-1" #invalid
+        return {'prediction': prediction,
+                'true_label': true_label,
+                'raw_text': generation }
 
     def process_results(self, generations, references):
         # TODO: define how the evaluation score is computed from list of \
@@ -116,13 +112,10 @@ class CloneDetection(Task):
         :return: dict[str: float]
         """
         accuracy_metric = evaluate.load("accuracy")
-        recall_metric = evaluate.load("recall")
-        precision_metric = evaluate.load("precision")
         f1_metric = evaluate.load("f1")
-        preds = [gen[0] for gen in generations]
+        preds = [gen[0]['prediction'] for gen in generations]
         return  {
-            "Accuracy": accuracy_metric.compute(predictions=preds, references=references),
-            "Recall":recall_metric.compute(predictions=preds, references=references), 
-            "Precision":precision_metric.compute(predictions=preds, references=references), 
-            "F1":f1_metric.compute(predictions=preds, references=references)
+            "Accuracy": accuracy_metric.compute(predictions=preds, references=references)['accuracy'],
+            "F1(micro)":f1_metric.compute(predictions=preds, references=references,average='micro')['f1'],
+            "F1(macro)":f1_metric.compute(predictions=preds, references=references,average='macro')['f1']
         }
