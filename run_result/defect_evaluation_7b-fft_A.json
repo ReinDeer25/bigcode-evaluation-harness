@@ -1,0 +1,43 @@
+{
+  "defectdetection": {
+    "Accuracy": 0.47840409956076135,
+    "F1(macro)": 0.2914819751161446
+  },
+  "config": {
+    "prefix": "",
+    "do_sample": false,
+    "temperature": 0.2,
+    "top_k": 0,
+    "top_p": 0.95,
+    "n_samples": 1,
+    "eos": "<|endoftext|>",
+    "seed": 0,
+    "model": "starpeft/starcoderbase-7b-fft",
+    "modeltype": "causal",
+    "peft_model": null,
+    "revision": null,
+    "use_auth_token": true,
+    "trust_remote_code": false,
+    "tasks": "defectdetection",
+    "instruction_tokens": null,
+    "batch_size": 1,
+    "max_length_generation": 512,
+    "precision": "fp32",
+    "load_in_8bit": false,
+    "load_in_4bit": false,
+    "limit": null,
+    "limit_start": 0,
+    "postprocess": true,
+    "allow_code_execution": false,
+    "generation_only": false,
+    "load_generations_path": null,
+    "load_data_path": null,
+    "metric_output_path": "./run_result/defect_evaluation_7b-fft_A.json",
+    "save_generations": true,
+    "save_generations_path": "./run_result/defect_generations_7b-fft_A.json",
+    "save_references": false,
+    "prompt": "prompt",
+    "max_memory_per_gpu": null,
+    "check_references": false
+  }
+}
