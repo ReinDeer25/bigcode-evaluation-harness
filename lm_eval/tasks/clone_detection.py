@@ -10,6 +10,8 @@ from lm_eval.base import Task
 import re
 import evaluate
 import json
+import random
+from datasets import load_dataset,concatenate_datasets
 
 # TODO: Add the BibTeX citation for the task.
 _CITATION = """
@@ -38,14 +40,29 @@ class CloneDetection(Task):
     DATASET_NAME = None
 
     def __init__(self):
+        self.true_label = []
         super().__init__(
             stop_words=["\n"],
             requires_execution=False,
         )
 
+    @staticmethod
+    def sampling(dataset,target,pos_n_sample,neg_n_sample,seed=0):
+        random.seed(seed)
+        neg_ds = dataset.filter(lambda example: example[target]==False)
+        pos_ds = dataset.filter(lambda example: example[target]==True)
+        neg_sampled_indices = random.sample(range(0, len(neg_ds)), neg_n_sample)
+        pos_sampled_indices = random.sample(range(0, len(pos_ds)), pos_n_sample)
+        neg_selected_ds = neg_ds.select(neg_sampled_indices)
+        pos_selected_ds = pos_ds.select(pos_sampled_indices)
+        combined_ds = concatenate_datasets([neg_selected_ds, pos_selected_ds]).shuffle(seed=seed)
+        return combined_ds
+
     def get_dataset(self):
         """Returns dataset for the task or an iterable of any object, that get_prompt can handle"""
-        return self.dataset["test"]
+        select_dataset = self.sampling(self.dataset["test"],"label",1000,1726,seed=0)
+        self.true_label = list(map(str, map(int, select_dataset['label'])))
+        return select_dataset 
 
     def fewshot_examples(self):
         """Loads and returns the few-shot examples for the task if they exist."""
@@ -61,7 +78,7 @@ class CloneDetection(Task):
         instruction= '''Is there a clone relation between the Code1 and Code2, and respond to YES or NO.'''
         code1= doc['func1']
         code2= doc['func2']
-        prompt= f'''Question: {instruction}\nCode1: {code1}.\nCode2: {code2}.\n\nAnswer:'''
+        prompt= f'''Question: Code1: {code1}.\nCode2: {code2}.\n{instruction}\n\nAnswer:'''
         return prompt
 
     def get_reference(self, doc):
@@ -84,17 +101,18 @@ class CloneDetection(Task):
         :return: str
         """
         # logic is to count the word from generation text and used as the final prediction
-        true_label = self.get_reference(self.dataset["test"][idx])
+        true_label = self.true_label[idx]
         process = generation.split("\nAnswer:")[-1]
-        yes_word_count = len(re.findall(r'\byes\b', process.lower())) 
-        no_word_count = len(re.findall(r'\bno\b', process.lower())) 
+        yes_word_count = len(re.findall(r'\byes\b|\bthere is a clone relation\b', process.lower())) 
+        no_word_count = len(re.findall(r'\bno\b|\bthere is no\b', process.lower())) 
         if yes_word_count>no_word_count:
             prediction = "1" #semantic equivalence (clone)
         elif yes_word_count<no_word_count:
             prediction = "0" #different
         else:
             prediction = "-1" #invalid
-        return {'prediction': prediction,
+        return {'ID':idx,
+                'prediction': prediction,
                 'true_label': true_label,
                 'raw_text': generation }
 
@@ -116,6 +134,5 @@ class CloneDetection(Task):
         preds = [gen[0]['prediction'] for gen in generations]
         return  {
             "Accuracy": accuracy_metric.compute(predictions=preds, references=references)['accuracy'],
-            "F1(micro)":f1_metric.compute(predictions=preds, references=references,average='micro')['f1'],
             "F1(macro)":f1_metric.compute(predictions=preds, references=references,average='macro')['f1']
         }
